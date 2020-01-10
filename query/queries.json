@@ -1,0 +1,4 @@
+{
+    "getAllData" : "SELECT TOP(5) * FROM [dbo].[categories]",
+    "addNewData" :"INSERT INTO [dbo].[categories] (name,parentId) VALUES (@name,@parentId) "
+}

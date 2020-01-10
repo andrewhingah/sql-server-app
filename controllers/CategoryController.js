@@ -1,62 +1,36 @@
-const express = require("express");
-const router = express.Router();
-const sql = require("mssql");
-const conn = require("../connection/connect");
+const { sql, poolPromise } = require("../connection/connect");
 
-router.route("/").get(function(req, res) {
-  conn
-    .connect()
-    .then(function() {
-      const sqlQuery = "SELECT * FROM categories";
-      const req = new sql.Request(conn);
-      req.query(sqlQuery).then(function(recordset) {
-        res.json(recordset.recordset);
-        conn.close();
-      });
-    })
-    .catch(function(err) {
-      conn.close();
-      res.status(400).send("Error while inserting data");
-    });
-});
+class MainController {
+  async getAllData(req, res) {
+    try {
+      const pool = await poolPromise;
+      const result = await pool.request().query(queries.getAllData);
+      res.json(result.recordset);
+    } catch (error) {
+      res.status(500);
+      res.send(error.message);
+    }
+  }
 
-router.route("/api/categories").post(function(req, res) {
-  conn
-    .connect()
-    .then(function() {
-      const transaction = new sql.Transaction(conn);
-      transaction
-        .begin()
-        .then(function() {
-          const request = new sql.Request(transaction);
-          request.input("Name", sql.VarChar(255), req.body.Name);
-          request.input("CategoryId", sql.Int, req.body.CategoryId);
-          request
-            .execute("Usp_InsertCategory")
-            .then(function() {
-              transaction
-                .commit()
-                .then(function(recordset) {
-                  conn.close();
-                  res.status(200).send(req.body);
-                })
-                .catch(function(err) {
-                  conn.close();
-                  res.status(400).send("Error while inserting data");
-                });
-            })
-            .catch(function(err) {
-              conn.close();
-              res.status(400).send("Error while inserting data");
-            });
-        })
-        .catch(function(err) {
-          conn.close();
-          res.status(400).send("Error while inserting data");
-        });
-    })
-    .catch(function(err) {
-      conn.close();
-      res.status(400).send("Error while inserting data");
-    });
-});
+  async addNewData(req, res) {
+    try {
+      if (req.body.Name != null) {
+        const pool = await poolPromise;
+        const result = await pool
+          .request()
+          .input("name", sql.VarChar, req.body.name)
+          .input("parentId", sql.Int, req.body.parentId)
+          .query(queries.addNewData);
+        res.json(result);
+      } else {
+        res.send("Please fill in the name");
+      }
+    } catch (error) {
+      res.status(500);
+      res.send(error.message);
+    }
+  }
+}
+
+const controller = new MainController()
+module.exports = controller;

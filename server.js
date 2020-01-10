@@ -1,17 +1,18 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const categoryController = require("./controllers/CategoryController");
-
+const router = require("./routes/route");
 const app = express();
-const port = process.env.port || 1337;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(router);
 
-// app.get("/categories", function(request, response) {
-//   response.json({ Message: "Welcome Andrew" });
-// });
+const port = 3000;
 
-app.listen(port, function() {
-  console.log(`Server running on port ${port}`);
+app.listen(process.env.PORT || port, err => {
+  if (err) {
+    console.log("unable to start the server!");
+  } else {
+    console.log(`server started on port ${port}`);
+  }
 });
