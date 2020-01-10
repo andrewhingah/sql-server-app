@@ -1,9 +1,12 @@
-const { sql, poolPromise } = require("../connection/connect");
+const { sql, conn } = require("../connection/connect");
+const fs = require('fs');
+var rawdata = fs.readFileSync('./query/queries.json');
+var queries = JSON.parse(rawdata);
 
 class MainController {
   async getAllData(req, res) {
     try {
-      const pool = await poolPromise;
+      const pool = await conn;
       const result = await pool.request().query(queries.getAllData);
       res.json(result.recordset);
     } catch (error) {
@@ -14,8 +17,9 @@ class MainController {
 
   async addNewData(req, res) {
     try {
-      if (req.body.Name != null) {
-        const pool = await poolPromise;
+      if (req.body.name != null) {
+        const pool = await conn;
+        console.log('pool: ', pool)
         const result = await pool
           .request()
           .input("name", sql.VarChar, req.body.name)

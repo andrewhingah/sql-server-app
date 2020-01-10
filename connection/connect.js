@@ -1,12 +1,12 @@
 const sql = require("mssql");
 const config = {
   user: "sa",
-  password: "awhkv07069292dw",
+  password: "",
   server: "localhost",
   database: "TestDB"
 };
 
-const connect = new sql.ConnectionPool(config)
+const conn = new sql.ConnectionPool(config)
   .connect()
   .then(pool => {
     console.log("Connected to database");
@@ -14,4 +14,4 @@ const connect = new sql.ConnectionPool(config)
   })
   .catch(err => console.log("Database connection failed: ", err));
 
-module.exports = { sql, connect };
+module.exports = { sql, conn };
