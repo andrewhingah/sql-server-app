@@ -19,11 +19,10 @@ class MainController {
     try {
       if (req.body.name != null) {
         const pool = await conn;
-        console.log('pool: ', pool)
         const result = await pool
           .request()
           .input("name", sql.VarChar, req.body.name)
-          .input("parentId", sql.Int, req.body.parentId)
+          .input("parentId", sql.VarChar, req.body.parentId)
           .query(queries.addNewData);
         res.json(result);
       } else {
