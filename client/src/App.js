@@ -28,19 +28,16 @@ class PerformanceTable extends Component {
     });
   }
 
-  // renderTableHeader() {
-  //   let header = Object.keys(this.state.categories[0]);
-  //   return header.map((key, index) => {
-  //     return <th key={index}>{key.toUpperCase()}</th>;
-  //   });
-  // }
-
   render() {
     return (
       <div>
         <h1 id="title">Performance Indicator: Categories</h1>
-        <table id="students">
-          {/* <tr>{this.renderTableHeader()}</tr> */}
+        <table id="categories">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>ParentId</th>
+          </tr>
           <tbody>{this.renderTableData()}</tbody>
         </table>
       </div>
