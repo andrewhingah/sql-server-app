@@ -1,6 +1,6 @@
 const { sql, conn } = require("../connection/connect");
-const fs = require('fs');
-var rawdata = fs.readFileSync('./query/queries.json');
+const fs = require("fs");
+var rawdata = fs.readFileSync("./query/queries.json");
 var queries = JSON.parse(rawdata);
 
 class MainController {
@@ -33,7 +33,27 @@ class MainController {
       res.send(error.message);
     }
   }
+
+  async updateData(req, res) {
+    try {
+      if (req.body.name !== null || req.body.parentId !== null) {
+        const pool = await conn;
+        const result = await pool
+          .request()
+          .input("id", sql.VarChar, req.body.id)
+          .input("newName", sql.VarChar, req.body.newName)
+          .input("newParentId", sql.VarChar, req.body.newParentId)
+          .query(queries.updateData);
+        res.json(result);
+      } else {
+        res.send("Either one or two fields required");
+      }
+    } catch (error) {
+      res.status(500);
+      res.send(error.message);
+    }
+  }
 }
 
-const controller = new MainController()
+const controller = new MainController();
 module.exports = controller;
